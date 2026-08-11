@@ -1,0 +1,6 @@
+runtime: python311
+instance_class: F1
+entrypoint: gunicorn -b :$PORT app:app
+
+env_variables:
+  SECRET_KEY: 'railexpress_production_secret_key_2026'

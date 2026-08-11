@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RailExpress Premier — Commercial Railway & Travel Service</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span class="nav-logo-icon">🚆</span> RailExpress <span style="font-weight:400; font-size:1.1rem; color:var(--accent);">PREMIER</span>
+        </div>
+        <ul class="nav-menu">
+            <li><a href="#search-section" class="nav-link active">Train Search</a></li>
+            <li><a href="#search-section" class="nav-link">Network & Schedules</a></li>
+            <li><a href="#tourist-section" class="nav-link">Tourist Guides</a></li>
+            <li><a href="#hotels-section" class="nav-link">Hotels</a></li>
+        </ul>
+        <div id="auth-nav-container" class="auth-btn-group">
+            <!-- Rendered by app.js -->
+        </div>
+    </nav>
+
+    <!-- HERO & SEARCH WIDGET -->
+    <header class="hero-container" id="search-section">
+        <span class="hero-badge">Official Railway Network Engine</span>
+        <h1 class="hero-title">Experience Commercial Railway Travel,<br>Reimagined.</h1>
+        <p class="hero-subtitle">Book high-speed express trains, check live stop schedules, select custom coach seats, and plan your multi-day Indian travel itineraries.</p>
+
+        <form class="search-widget" onsubmit="event.preventDefault(); executeSearch();">
+            <div class="form-group">
+                <label class="form-label">From Station</label>
+                <select id="search-from" class="form-select" required>
+                    <option value="NDLS">New Delhi (NDLS)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">To Station</label>
+                <select id="search-to" class="form-select" required>
+                    <option value="BSB">Varanasi (BSB)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Journey Date</label>
+                <input type="date" id="search-date" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Passengers</label>
+                <select id="search-passengers" class="form-select">
+                    <option value="1">1 Passenger</option>
+                    <option value="2">2 Passengers</option>
+                    <option value="3">3 Passengers</option>
+                    <option value="4">4 Passengers</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Class</label>
+                <select id="search-class" class="form-select">
+                    <option value="ALL">All Classes</option>
+                    <option value="EC">Executive Chair (EC)</option>
+                    <option value="1A">AC 1st Class (1A)</option>
+                    <option value="2A">AC 2-Tier (2A)</option>
+                    <option value="3A">AC 3-Tier (3A)</option>
+                    <option value="CC">AC Chair Car (CC)</option>
+                    <option value="SL">Sleeper (SL)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-accent" style="width:100%; height:46px;">
+                    🔍 Search Trains
+                </button>
+            </div>
+        </form>
+    </header>
+
+    <!-- SEARCH RESULTS SECTION -->
+    <main class="section-container">
+        <div class="filter-bar">
+            <div>
+                <strong style="color:#fff;">Train Routes & Schedules</strong>
+                <span style="font-size:0.85rem; color:var(--text-muted); margin-left:0.5rem;">Direct Database Querying</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:0.75rem;">
+                <label style="font-size:0.85rem; color:var(--text-muted);">Sort By:</label>
+                <select id="sort-by" class="form-select" style="width:auto; padding:0.4rem 0.85rem;" onchange="executeSearch()">
+                    <option value="cheapest">Cheapest Fare</option>
+                    <option value="fastest">Fastest Duration</option>
+                    <option value="earliest">Earliest Departure</option>
+                    <option value="availability">Highest Seat Availability</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="train-results-container" class="train-card-list">
+            <!-- Rendered by app.js -->
+        </div>
+    </main>
+
+    <!-- TOURIST EXPLORE SECTION -->
+    <section class="section-container" id="tourist-section">
+        <div class="section-header">
+            <div>
+                <h2 class="section-title">🗺 Explore Railway Destinations</h2>
+                <p class="section-subtitle">Plan your journey with complete destination guides, attractions, and day-by-day travel itineraries.</p>
+            </div>
+        </div>
+
+        <div id="destinations-grid" class="grid-cards-3">
+            <!-- Rendered by app.js -->
+        </div>
+    </section>
+
+    <!-- HOTELS DIRECTORY SECTION -->
+    <section class="section-container" id="hotels-section">
+        <div class="section-header">
+            <div>
+                <h2 class="section-title">🏨 Recommended Station Hotels</h2>
+                <p class="section-subtitle">Database-driven luxury and heritage hotel recommendations across major terminal stations.</p>
+            </div>
+        </div>
+
+        <div id="hotels-grid" class="grid-cards-3">
+            <!-- Rendered by app.js -->
+        </div>
+    </section>
+
+    <!-- SCHEDULE MODAL -->
+    <div class="modal-backdrop" id="schedule-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 id="schedule-modal-title">Train Schedule</h3>
+                <button class="close-btn" onclick="closeModal('schedule-modal')">&times;</button>
+            </div>
+            <div id="schedule-modal-content">
+                <!-- Rendered dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- SEAT SELECTION MODAL -->
+    <div class="modal-backdrop" id="seat-modal">
+        <div class="modal-card" style="max-width:720px;">
+            <div class="modal-header">
+                <h3>💺 Interactive Seat Selection</h3>
+                <button class="close-btn" onclick="closeModal('seat-modal')">&times;</button>
+            </div>
+            <p id="seat-train-info" style="color:var(--text-muted); margin-bottom:1rem;"></p>
+            
+            <div class="seat-picker-container">
+                <div class="coach-header">
+                    <strong style="color:var(--accent);">Coach Map Layout</strong>
+                    <div class="seat-legend">
+                        <div class="legend-item"><span class="legend-dot dot-available"></span> 🟢 Available</div>
+                        <div class="legend-item"><span class="legend-dot dot-selected"></span> 🔵 Selected</div>
+                        <div class="legend-item"><span class="legend-dot dot-occupied"></span> 🔴 Occupied</div>
+                    </div>
+                </div>
+
+                <div id="coach-grid" class="coach-layout-grid">
+                    <!-- Rendered by app.js -->
+                </div>
+
+                <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-glass); padding-top:1rem;">
+                    <div id="seat-summary-box">
+                        Select seats to proceed...
+                    </div>
+                    <button id="proceed-checkout-btn" class="btn btn-accent" disabled onclick="proceedToCheckout()">
+                        Proceed to Booking ➔
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHECKOUT & PASSENGERS MODAL -->
+    <div class="modal-backdrop" id="checkout-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>📋 Booking Summary & Passenger Info</h3>
+                <button class="close-btn" onclick="closeModal('checkout-modal')">&times;</button>
+            </div>
+
+            <form onsubmit="confirmBookingPayment(event)">
+                <div id="checkout-summary-breakdown" style="background:rgba(11, 19, 43, 0.6); padding:1rem; border-radius:var(--radius-sm); margin-bottom:1.5rem;">
+                    <!-- Rendered by app.js -->
+                </div>
+
+                <h4 style="margin-bottom:0.75rem;">👨‍👩‍👧 Passenger Details</h4>
+                <div id="passenger-inputs-container">
+                    <!-- Dynamic passenger inputs -->
+                </div>
+
+                <div style="margin-top:1.5rem; background:rgba(16, 185, 129, 0.1); border:1px solid rgba(16, 185, 129, 0.3); padding:1rem; border-radius:var(--radius-sm); margin-bottom:1.5rem;">
+                    <div style="color:var(--success); font-weight:700; margin-bottom:0.2rem;">💳 Express Payment Simulation</div>
+                    <div style="font-size:0.85rem; color:var(--text-muted);">Demonstration checkout — click confirm to issue official database PNR.</div>
+                </div>
+
+                <button type="submit" class="btn btn-accent" style="width:100%;">
+                    🎟 Confirm Booking & Issue Ticket
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MY BOOKINGS & PNR MODAL -->
+    <div class="modal-backdrop" id="my-bookings-modal">
+        <div class="modal-card" style="max-width:750px;">
+            <div class="modal-header">
+                <h3>🎟 My Railway Tickets & PNR</h3>
+                <button class="close-btn" onclick="closeModal('my-bookings-modal')">&times;</button>
+            </div>
+            <div id="my-bookings-list">
+                <!-- Rendered dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- DESTINATION DETAILS MODAL -->
+    <div class="modal-backdrop" id="dest-detail-modal">
+        <div class="modal-card" style="max-width:800px;">
+            <div class="modal-header">
+                <h3>Destination Profile</h3>
+                <button class="close-btn" onclick="closeModal('dest-detail-modal')">&times;</button>
+            </div>
+            <div id="dest-detail-content">
+                <!-- Rendered dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- LOGIN MODAL -->
+    <div class="modal-backdrop" id="login-modal">
+        <div class="modal-card" style="max-width:420px;">
+            <div class="modal-header">
+                <h3>Log In to RailExpress</h3>
+                <button class="close-btn" onclick="closeModal('login-modal')">&times;</button>
+            </div>
+            <form onsubmit="handleLogin(event)">
+                <div id="login-error" style="color:var(--danger); font-size:0.85rem; display:none; margin-bottom:1rem;"></div>
+                <div class="form-group" style="margin-bottom:1rem;">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" id="login-email" class="form-control" placeholder="rahul@example.com" required>
+                </div>
+                <div class="form-group" style="margin-bottom:1.5rem;">
+                    <label class="form-label">Password</label>
+                    <input type="password" id="login-password" class="form-control" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%;">Log In</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- SIGNUP MODAL (WITH AGE RESTRICTION DOB VALIDATION) -->
+    <div class="modal-backdrop" id="signup-modal">
+        <div class="modal-card" style="max-width:480px;">
+            <div class="modal-header">
+                <h3>Create Passenger Account</h3>
+                <button class="close-btn" onclick="closeModal('signup-modal')">&times;</button>
+            </div>
+            <div style="background:rgba(245, 158, 11, 0.1); border:1px solid rgba(245, 158, 11, 0.3); padding:0.75rem 1rem; border-radius:var(--radius-sm); margin-bottom:1rem; font-size:0.85rem; color:var(--accent-gold);">
+                ⚠️ <strong>Age Requirement:</strong> Users must be 18 years or older to register and book train tickets. Backend validates Date of Birth strictly.
+            </div>
+            <form onsubmit="handleSignup(event)">
+                <div id="signup-error" style="color:var(--danger); font-size:0.85rem; display:none; margin-bottom:1rem;"></div>
+                <div class="form-group" style="margin-bottom:1rem;">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" id="signup-name" class="form-control" placeholder="Rahul Sharma" required>
+                </div>
+                <div class="form-group" style="margin-bottom:1rem;">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" id="signup-email" class="form-control" placeholder="rahul@example.com" required>
+                </div>
+                <div class="form-group" style="margin-bottom:1rem;">
+                    <label class="form-label">Date of Birth (Age >= 18)</label>
+                    <input type="date" id="signup-dob" class="form-control" required>
+                </div>
+                <div class="form-group" style="margin-bottom:1rem;">
+                    <label class="form-label">Mobile Number</label>
+                    <input type="tel" id="signup-phone" class="form-control" placeholder="+91 9876543210">
+                </div>
+                <div class="form-group" style="margin-bottom:1.5rem;">
+                    <label class="form-label">Password</label>
+                    <input type="password" id="signup-password" class="form-control" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn btn-accent" style="width:100%;">Complete Registration</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>© 2026 RailExpress Premier Commercial Railway Systems. All database train schedules and bookings processed live.</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
